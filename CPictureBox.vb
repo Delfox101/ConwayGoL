@@ -65,8 +65,6 @@
             Next
 
             Me.Image = CompileMap()
-
-
         End While
 
     End Sub
