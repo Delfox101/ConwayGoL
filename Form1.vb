@@ -6,10 +6,10 @@
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
         t = New CPictureBox(CWidth, CHeight)
-        t.Location = New Point(0,0)
+        t.Location = New Point(0, 0)
         Me.Controls.Add(t)
     End Sub
-    'TEST
+
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         t.StartSimulation()
     End Sub
