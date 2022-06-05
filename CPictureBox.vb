@@ -37,7 +37,7 @@
     Public Sub StartSimulation()
         Me.myState = state.isRunning
         Me.FillMap()
-
+        'THIS IS A TEST COMMIT FOR SYNCING
         While 100
             Dim count As Integer = 0
             For x = 0 To canvas.Width - 1
