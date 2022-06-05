@@ -12,9 +12,5 @@
     'TEST
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         t.StartSimulation()
-        Dim i As Integer = 4
-        i += 1
-        MsgBox(i)
-        Dim a As String
     End Sub
 End Class
