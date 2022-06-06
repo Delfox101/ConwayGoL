@@ -11,6 +11,8 @@
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        t.StartSimulation()
+        't.StartSimulation()
+        Dim thread As New System.Threading.Thread(Sub() t.StartSimulation())
+        thread.Start()
     End Sub
 End Class
