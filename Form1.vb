@@ -8,10 +8,13 @@
         t = New CPictureBox(CWidth, CHeight)
         t.Location = New Point(0, 0)
         Me.Controls.Add(t)
+
+        t.RandomInit(0.01)
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         't.StartSimulation()
+
         Dim thread As New System.Threading.Thread(Sub() t.StartSimulation())
         thread.Start()
     End Sub

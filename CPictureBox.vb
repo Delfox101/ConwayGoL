@@ -1,10 +1,13 @@
 ﻿Public Class CPictureBox
     Inherits PictureBox
 
-    Private scale = 3
+    Private scale = 5
 
-    Private ForeGroundCol = Color.Brown
-    Private BackGroundCol = Color.Pink
+    Private ForeGroundCol = Color.MintCream
+
+    Private BackGroundCol = Color.LightSteelBlue
+
+
 
     Private Enum state
         setup
@@ -37,11 +40,21 @@
 
     Private Sub CPictureBox_MouseDown(sender As Object, e As MouseEventArgs) Handles Me.Click
         If Me.myState = state.setup Then
-            MsgBox(currentMap(To1D((e.Location.X - 1) / scale, (e.Location.Y - 1) / scale)))
+            'MsgBox(currentMap(To1D((e.Location.X - 1) / scale, (e.Location.Y - 1) / scale)))
             currentMap(To1D((e.Location.X - 1) / scale, (e.Location.Y - 1) / scale)) = 1
             Me.Image = CompileMap(currentMap)
-
         End If
+    End Sub
+
+    Public Sub RandomInit(chance As Decimal)
+        Dim random As New Random
+        For i = 0 To currentMap.Length - 1
+            If currentMap(i) = 1 Then Continue For
+            If random.NextDouble <= chance Then
+                currentMap(i) = 1
+            End If
+        Next
+        Me.Image = CompileMap(currentMap)
     End Sub
 
     Public Sub StartSimulation()
@@ -57,26 +70,23 @@
                     'gets number of live neighbours around a current cell
                     For ex = -1 To 1
                         For ey = -1 To 1
-                            If (ex = 0 And ey = 0) Or x + ex < 0 Or x + ex >= CScale.Width Or ex + ey < 0 Or ex + ey >= CScale.Height Then Continue For
-                            numLiveNeighbours += currentMap(To1D(x, y))
+                            If (ex = 0 And ey = 0) Or x + ex < 0 Or x + ex >= CScale.Width Or y + ey < 0 Or y + ey >= CScale.Height Then
+                                Continue For
+                            Else
+                                numLiveNeighbours += currentMap(To1D(x + ex, y + ey))
+                            End If
                         Next
                     Next
 
-                    If currentMap(To1D(x, y)) = 1 Then MsgBox(numLiveNeighbours.ToString)
+                    'rules
 
-                    'If currentMap(To1D(x, y)) = 1 And (numLiveNeighbours < (1 * 2) Or numLiveNeighbours > (1 * 3)) Then
-                    '    newmap(To1D(x, y)) = 0
-                    '    MsgBox(numLiveNeighbours.ToString)
-                    'Else
-                    '    If numLiveNeighbours = (1 * 3) Then
-                    '        newmap(To1D(x, y)) = 1
-                    '    End If
-                    'End If
-
-                    'If currentMap(To1D(x, y)) = 1 And To1D(x, y) + 1 < currentMap.Length Then
-                    '    newmap(To1D(x, y) + 1) = 1
-                    'End If
-
+                    If currentMap(To1D(x, y)) = 1 And numLiveNeighbours < 2 Then
+                        newmap(To1D(x, y)) = 0
+                    ElseIf currentMap(To1D(x, y)) = 1 And numLiveNeighbours > 3 Then
+                        newmap(To1D(x, y)) = 0
+                    ElseIf currentMap(To1D(x, y)) = 0 And numLiveNeighbours = 3 Then
+                        newmap(To1D(x, y)) = 1
+                    End If
 
                 Next
             Next
@@ -87,6 +97,8 @@
         End While
 
     End Sub
+
+
 
     Private Function CompileMap(m As Integer()) As Bitmap
         Dim bmp As New Bitmap(CScale.Width, CScale.Height)
