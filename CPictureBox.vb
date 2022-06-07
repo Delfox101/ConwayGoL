@@ -18,14 +18,14 @@
     Private canvasGraphics As Graphics
     Private CScale As Size
 
-    Private map As Integer()
+    Private currentMap As Integer()
 
     Public Sub New(_width As Integer, _height As Integer)
         Me.myState = state.setup
         Me.Size = New Size(_width, _height) * scale
         Me.SizeMode = PictureBoxSizeMode.StretchImage
 
-        map = New Integer(_width * _height - 1) {}
+        currentMap = New Integer(_width * _height - 1) {}
 
         canvas = New Bitmap(_width, _height)
         canvasGraphics = Graphics.FromImage(canvas)
@@ -35,49 +35,45 @@
         Me.Image = canvas
     End Sub
 
-    Private Sub CPictureBox_MouseDown(sender As Object, e As MouseEventArgs) Handles Me.MouseDown
+    Private Sub CPictureBox_MouseDown(sender As Object, e As MouseEventArgs) Handles Me.Click
         If Me.myState = state.setup Then
-            map(To1D((e.Location.X - 1) / scale, (e.Location.Y - 1) / scale)) = 1
-            Me.Image = CompileMap(map)
+            MsgBox(currentMap(To1D((e.Location.X - 1) / scale, (e.Location.Y - 1) / scale)))
+            currentMap(To1D((e.Location.X - 1) / scale, (e.Location.Y - 1) / scale)) = 1
+            Me.Image = CompileMap(currentMap)
+
         End If
     End Sub
 
     Public Sub StartSimulation()
         Me.myState = state.isRunning
-        'Me.FillMap()
-        Dim oldmap() As Integer = map
-        Dim newmap(canvas.Width * canvas.Height - 1) As Integer
 
+        Dim newmap(canvas.Width * canvas.Height - 1) As Integer
 
         While True
             For x = 0 To CScale.Width - 1
                 For y = 0 To CScale.Height - 1
-                    Dim count As Integer = 0
+                    Dim numLiveNeighbours As Integer = 0
+
+                    'gets number of live neighbours around a current cell
                     For ex = -1 To 1
                         For ey = -1 To 1
-                            If ex = 0 And ey = 0 Then Continue For
-                            count += oldmap(To1D(x, y))
+                            If (ex = 0 And ey = 0) Or x + ex < 0 Or x + ex >= CScale.Width Or ex + ey < 0 Or ex + ey >= CScale.Height Then Continue For
+                            numLiveNeighbours += currentMap(To1D(x, y))
                         Next
                     Next
 
-                    If oldmap(To1D(x, y)) = 1 And (count < (1 * 2) Or count > (1 * 3)) Then
-                        newmap(To1D(x, y)) = 0
-                        MsgBox(count.ToString)
-                    Else
-                        If count = (1 * 3) Then
-                            newmap(To1D(x, y)) = 1
-                        End If
-                    End If
+                    If currentMap(To1D(x, y)) = 1 Then MsgBox(numLiveNeighbours.ToString)
 
-                    'If oldmap(To1D(x, y)) = 1 Then
+                    'If currentMap(To1D(x, y)) = 1 And (numLiveNeighbours < (1 * 2) Or numLiveNeighbours > (1 * 3)) Then
                     '    newmap(To1D(x, y)) = 0
-                    '    'MsgBox(x.ToString & " " & y.ToString)
-                    '    If x + 1 < canvas.Width Then
-                    '        newmap(To1D(x + 1, y)) = 1
+                    '    MsgBox(numLiveNeighbours.ToString)
+                    'Else
+                    '    If numLiveNeighbours = (1 * 3) Then
+                    '        newmap(To1D(x, y)) = 1
                     '    End If
                     'End If
 
-                    'If oldmap(To1D(x, y)) = 1 And To1D(x, y) + 1 < oldmap.Length Then
+                    'If currentMap(To1D(x, y)) = 1 And To1D(x, y) + 1 < currentMap.Length Then
                     '    newmap(To1D(x, y) + 1) = 1
                     'End If
 
@@ -85,11 +81,7 @@
                 Next
             Next
 
-            oldmap = newmap
-
-            'Dim t = New Bitmap(100, 100)
-            'Dim tg = Graphics.FromImage(t)
-            'tg.FillRectangle(Brushes.Yellow, New Rectangle(0, 0, t.Width, t.Height))
+            currentMap = newmap
             Me.Image = CompileMap(newmap)
             System.Threading.Thread.Sleep(100)
         End While
