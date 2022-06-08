@@ -1,18 +1,14 @@
 ﻿Public Class CPictureBox
     Inherits PictureBox
 
-    Private scale = 5
-
-    Private ForeGroundCol = Color.MintCream
-
-    Private BackGroundCol = Color.LightSteelBlue
-
-
-
     Private Enum state
         setup
         isRunning
     End Enum
+
+    Private scale = 3
+    Private ForeGroundCol = Color.FloralWhite
+    Private BackGroundCol = Color.SteelBlue
 
     Private myState As state
 
@@ -54,15 +50,20 @@
                 currentMap(i) = 1
             End If
         Next
-        Me.Image = CompileMap(currentMap)
+
     End Sub
+
+
+    Private Function dist(x, y, mx, my, w) As Boolean
+        Return Math.Sqrt(((mx - x) ^ 2) + ((my - y) ^ 2)) = w
+    End Function
+
 
     Public Sub StartSimulation()
         Me.myState = state.isRunning
 
-        Dim newmap(canvas.Width * canvas.Height - 1) As Integer
-
         While True
+            Dim newmap(canvas.Width * canvas.Height - 1) As Integer
             For x = 0 To CScale.Width - 1
                 For y = 0 To CScale.Height - 1
                     Dim numLiveNeighbours As Integer = 0
@@ -80,14 +81,14 @@
 
                     'rules
 
-                    If currentMap(To1D(x, y)) = 1 And numLiveNeighbours < 2 Then
-                        newmap(To1D(x, y)) = 0
-                    ElseIf currentMap(To1D(x, y)) = 1 And numLiveNeighbours > 3 Then
-                        newmap(To1D(x, y)) = 0
-                    ElseIf currentMap(To1D(x, y)) = 0 And numLiveNeighbours = 3 Then
+                    If currentMap(To1D(x, y)) = 0 And numLiveNeighbours = 3 Then
                         newmap(To1D(x, y)) = 1
-                    End If
+                    ElseIf currentMap(To1D(x, y)) = 1 And (numLiveNeighbours = 2 Or numLiveNeighbours = 3) Then
+                        newmap(To1D(x, y)) = 1
+                    Else
+                        newmap(To1D(x, y)) = 0
 
+                    End If
                 Next
             Next
 

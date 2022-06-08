@@ -9,7 +9,8 @@
         t.Location = New Point(0, 0)
         Me.Controls.Add(t)
 
-        t.RandomInit(0.01)
+        't.RandomInit(0.1)
+        t.CircleInit(0.5)
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
